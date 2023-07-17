@@ -6,8 +6,8 @@ const jwt = require("jsonwebtoken");
 const verifyJwt = (req, res, next) => {
     try {
       //checking if the cookies found in header
-      if (req.headers.adminToken) {
-        const token = req.headers.adminToken;
+      if (req.headers.accesstoken) {
+        const token = req.headers.accesstoken;
   
         //verfiying authToken with jwt
         jwt.verify(token, process.env.JWT_ACCESS_SCERET_KEY, (err, user) => {

@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { GiHamburgerMenu } from "react-icons/gi";
 import { Disclosure } from "@headlessui/react";
 import { ComputerDesktopIcon, UserIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 function Layout() {
+    const Navigate = useNavigate()
 
     const [layouts, setLayouts] = useState([
         {
@@ -19,6 +20,11 @@ function Layout() {
         },
 
     ])
+
+    const logout = () => {
+        localStorage.removeItem('accessToken');
+        Navigate("/");
+    };
 
     return (
         <div className='flex'>
@@ -56,7 +62,7 @@ function Layout() {
                             <div className="flex mb-2 justify-start items-center gap-4 pl-5 border border-gray-200  hover:bg-gray-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto">
                                 <ArrowLeftOnRectangleIcon className="text-dark m-2 h-6 w-6 group-hover:text-white" />
                                 <button>
-                                    <h3 className="text-base text-gray-800 group-hover:text-white font-semibold ">
+                                    <h3 className="text-base text-gray-800 group-hover:text-white font-semibold " onClick={logout}>
                                         Logout
                                     </h3>
                                 </button>
