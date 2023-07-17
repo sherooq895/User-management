@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoginData } from "../Api/UserAuthentication";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Cookies from "universal-cookie";
+import { authentication } from "../Api/UserAutherisation"
 
 function Login() {
 
@@ -17,27 +17,42 @@ function Login() {
     const navigate = useNavigate();
     const [er, setEr] = useState("");
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await authentication()
+                if(data.status){
+                    navigate('/showusers')
+                }
+            } catch (error) {
+                if (!error?.response?.data?.success) {
+                    navigate('/')
+                }
+            }
+        })()
+    }, [])
+
+
     const onSubmit = async (formdata) => {
         try {
-          const { data } = await LoginData(formdata);
-          console.log(data, "datavvvvvvvv");
-          localStorage.setItem("userId", data.user);
-          toast.success(data.message + "\n navigating to home..");
-          setTimeout(() => {
-            navigate("/showusers");
-          }, 2000);
-        } catch (err) {
-          if (err?.response?.status === 401) {
-            const { data } = err?.response;
-            setEr(data?.message);
+            const { data } = await LoginData(formdata);
+            localStorage.setItem("accessToken", data?.adminToken);
+            toast.success(data.message + "\n navigating to home..");
             setTimeout(() => {
-              setEr("");
-            }, 5000);
-          } else {
-            alert("something went wrong, try again");
-          }
+                navigate("/showusers");
+            }, 2000);
+        } catch (err) {
+            if (err?.response?.status === 401) {
+                const { data } = err?.response;
+                setEr(data?.message);
+                setTimeout(() => {
+                    setEr("");
+                }, 5000);
+            } else {
+                alert("something went wrong, try again");
+            }
         }
-      };
+    };
 
 
     return (
@@ -61,7 +76,7 @@ function Login() {
                         <p className="mb-4 text-red-400 text-sm ml-2">{er}</p>
                     </div>
                     <div className="mt-8">
-                        <form onSubmit={handleSubmit(onSubmit, (data) => {})}>
+                        <form onSubmit={handleSubmit(onSubmit, (data) => { })}>
                             <div>
                                 <label className="block mb-2 text-sm text-white dark:text-gray-200">
                                     Email Address
